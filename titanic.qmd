@@ -1,0 +1,178 @@
+---
+title: "HW1"
+subtitle: "A summary report for the Titanic dataset"
+date: today
+author: Hung-Tse Hsu
+format: 
+  pdf: 
+    include-in-header:
+      - text: |
+          \usepackage{setspace,relsize}
+          \usepackage{geometry}
+          \geometry{verbose,tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm}
+          \usepackage{fontspec}
+          \setmainfont{PingFang TC}
+mainfont: "PingFang TC"
+toc: true
+lang: zh-Tw
+documentclass: article
+pdf-engine: xelatex
+execute:
+  tidy: true
+  echo: true
+  warning: false
+  message: false
+---
+
+## 一、讀取資料
+
+```{r}
+#| results: asis
+# R Interface to Python
+library(readxl)
+library(reticulate)
+library(Hmisc)
+titanic.df <- read.csv("/Users/xuhongze/Statistical_Consulting/HW1/titanic.csv")
+latex(describe(titanic.df), file="")
+```
+
+## 二、資料視覺化
+
+```{r}
+# 載入所需的套件
+library(ggplot2)
+library(dplyr)
+library(showtext)
+showtext_auto()
+theme_set(theme_gray(base_family = "PingFang TC"))
+
+# 1. Barplot of Survived
+ggplot(titanic.df, aes(x = factor(Survived))) +
+  geom_bar(fill = c("blue", "red")) +
+  labs(x = "生還狀況", y = "乘客數量", title = "生還與未生還的乘客數量") +
+  scale_x_discrete(labels = c("未生還", "生還"))
+
+# 2. Histogram of Age
+ggplot(titanic.df, aes(x = Age)) +
+  geom_histogram(binwidth = 5, fill = "lightblue", color = "black") +
+  labs(x = "年齡", y = "人數", title = "乘客年齡分佈")
+
+# 3. Barplot of Sex
+ggplot(titanic.df, aes(x = Sex)) +
+  geom_bar(fill = c("blue", "pink")) +
+  labs(x = "性別", y = "乘客數量", title = "乘客性別分佈")
+
+# 4. Barplot of Pclass
+ggplot(titanic.df, aes(x = factor(Pclass))) +
+  geom_bar(fill = "lightgreen") +
+  labs(x = "艙等", y = "乘客數量", title = "不同艙等的乘客數量") +
+  scale_x_discrete(labels = c("一等艙", "二等艙", "三等艙"))
+
+# # 5. Barplot of Fare
+# ggplot(titanic.df, aes(y = Fare)) +
+#   geom_boxplot(fill = "lightcoral") +
+#   labs(y = "票價", title = "票價分佈")
+
+# 5. Density plot of Far
+ggplot(titanic.df, aes(x = Fare)) +
+  geom_density(fill = "lightblue", alpha = 0.5) +
+  labs(x = "票價", y = "密度", title = "票價分佈")
+
+
+# 6. Barplot of Embarked
+ggplot(titanic.df, aes(x = Embarked)) +
+  geom_bar(fill = "lightblue") +
+  labs(x = "登船港口", y = "乘客數量", title = "乘客登船港口分佈") +
+  scale_x_discrete(labels = c("C" = "Cherbourg", "Q" = "Queenstown", "S" = "Southampton"))
+```
+
+## 三、資料摘要
+1. Passenger Id
+
+總共有 891 筆資料，無缺失值，所有資料的 Passenger Id 皆不重複。
+
+2. Survived (生還狀況)
+
+總共有 891 筆資料，無缺失值，生還狀況有兩種分類。
+
+0（未生還）：342 人、1（生還）：549 人。
+
+生還率約為 38.38%。
+
+3. Pclass (艙等)
+
+總共有 891 筆資料，無缺失值，艙等有 3 種分類。
+
+一等艙：216 人、二等艙：184 人、三等艙：491 人。
+
+三等艙的比例最大，佔總數的 55.1%。
+
+4. Name (姓名)
+
+總共有 891 筆資料，無缺失值。
+
+姓名有 891 種不同的名稱。
+
+5. Sex (性別)
+
+總共有 891 筆資料，無缺失值，性別有兩種分類。
+
+女性：314 人（35.2%）、男性：577 人（64.8%）。
+
+6. Age (年齡)
+
+總共有 714 筆資料（177 筆缺失值）
+
+最小值：4個月 
+
+最大值：80歲
+
+平均年齡：29.7 歲
+
+年齡的標準差：16.21
+
+年齡分佈的中位數：28 歲
+
+四分位數範圍從 20.12 歲到 50 歲
+
+
+7. SibSp (兄弟姊妹/配偶數量)
+
+總共有 891 筆資料，無缺失值。
+
+608 位乘客有 0 名兄弟姊妹/配偶，209 位乘客有 1 名。
+
+8. Parch (父母/子女數量)
+總共有 891 筆資料，無缺失值。
+
+678 位乘客有 0 名父母或子女，118 位乘客有 1 名。
+
+9. Ticket (票號)
+
+總共有 891 筆資料，無缺失值。
+
+10. Fare (票價)
+
+總共有 891 筆資料，無缺失值，票價範圍從 0 到 512.33 美元。
+
+平均票價：32.2 美元
+
+標準差：36.78 美元
+
+票價的中位數：14.45 美元
+
+四分位數範圍從 7.91 美元到 77.96 美元
+
+11. Cabin (艙房號碼)
+
+總共有 204 筆資料，缺失值有 687 筆，艙房號碼有 147 種不同的標識。
+
+部分艙房號碼如 A10、A14、F33 等，顯示出不均勻的分佈。
+
+12. Embarked (登船港口)
+
+總共有 889 筆資料，缺失值 2 筆
+
+登船港口有 3 種（C = Cherbourg，Q = Queenstown，S = Southampton）。
+
+S：644 人（72.4%）、C：168 人（18.9%）、Q：77 人（8.7%）
